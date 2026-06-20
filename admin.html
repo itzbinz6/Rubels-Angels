@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin &mdash; Rubels &amp; Angels</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+:root{
+  --font-display:'Fraunces',serif;
+  --font-body:'Manrope',sans-serif;
+  --red:#A8201A;
+  --gold:#C8962E;
+  --bg:#F3EAD9;
+  --surface:#FFFFFF;
+  --text-primary:#15110D;
+  --text-secondary:#4A3B30;
+  --text-tertiary:#7A6A5A;
+  --border:rgba(74,59,48,0.16);
+  --border-strong:rgba(74,59,48,0.32);
+  --radius:10px;
+}
+body{
+  background:var(--bg);
+  color:var(--text-secondary);
+  font-family:var(--font-body);
+  line-height:1.5;
+  min-height:100vh;
+}
+h1,h2,h3{font-family:var(--font-display);color:var(--text-primary);margin:0;}
+a{color:var(--red);}
+.container{max-width:980px;margin:0 auto;padding:0 24px;}
+
+/* ---------- login screen ---------- */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:40px;max-width:380px;width:100%;}
+.login-card h1{font-size:24px;margin-bottom:6px;}
+.login-card p.sub{font-size:13.5px;color:var(--text-tertiary);margin:0 0 28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12.5px;font-weight:700;color:var(--text-primary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+.field input,.field textarea,.field select{
+  width:100%;padding:11px 13px;border:1px solid var(--border-strong);border-radius:8px;
+  font-family:var(--font-body);font-size:14.5px;background:var(--bg);color:var(--text-primary);
+}
+.field input:focus,.field textarea:focus,.field select:focus{outline:2px solid var(--gold);outline-offset:1px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:8px;border:none;font-family:var(--font-body);font-weight:700;font-size:14px;cursor:pointer;transition:opacity .2s ease;}
+.btn:hover{opacity:.85;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-primary{background:var(--red);color:#fff;}
+.btn-outline{background:transparent;color:var(--text-primary);border:1px solid var(--border-strong);}
+.btn-small{padding:7px 14px;font-size:12.5px;}
+.btn-danger{background:#7A1410;color:#fff;}
+.error-msg{color:var(--red);font-size:13px;margin-top:10px;display:none;}
+.error-msg.show{display:block;}
+
+/* ---------- dashboard ---------- */
+header.admin-bar{background:var(--text-primary);color:#fff;padding:16px 0;}
+header.admin-bar .container{display:flex;align-items:center;justify-content:space-between;}
+header.admin-bar .logo{font-family:var(--font-display);font-weight:700;font-size:18px;color:#fff;text-decoration:none;}
+.tabs{display:flex;gap:6px;margin:28px 0 24px;}
+.tab-btn{background:transparent;border:1px solid var(--border-strong);padding:9px 18px;border-radius:8px;font-family:var(--font-body);font-weight:700;font-size:13.5px;color:var(--text-secondary);cursor:pointer;}
+.tab-btn.active{background:var(--text-primary);color:#fff;border-color:var(--text-primary);}
+.section-title{font-size:18px;margin:30px 0 14px;}
+.empty-note{color:var(--text-tertiary);font-size:13.5px;padding:18px 0;}
+
+.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;gap:16px;align-items:flex-start;}
+.rev-card img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;}
+.rev-card .rev-body{flex:1;min-width:0;}
+.rev-card .rev-name{font-weight:700;color:var(--text-primary);margin:0 0 2px;}
+.rev-card .rev-stars{color:var(--gold);font-size:13px;margin:0 0 6px;}
+.rev-card .rev-text{font-size:14px;margin:0;}
+.rev-card .rev-actions{display:flex;gap:8px;margin-top:12px;}
+
+.menu-form-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:30px;}
+.field-row{display:flex;gap:14px;}
+.field-row .field{flex:1;}
+
+.item-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;}
+.item-row img{width:48px;height:48px;object-fit:cover;border-radius:6px;flex-shrink:0;}
+.item-row .item-info{flex:1;min-width:0;}
+.item-row .item-info h4{margin:0 0 2px;font-size:15px;color:var(--text-primary);}
+.item-row .item-info p{margin:0;font-size:12.5px;color:var(--text-tertiary);}
+.item-row .item-price{font-family:monospace;font-size:14px;color:var(--red);white-space:nowrap;}
+.item-row .item-actions{display:flex;gap:6px;}
+.cat-heading{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary);margin:24px 0 10px;font-weight:700;}
+
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <h1>Rubels &amp; Angels</h1>
+    <p class="sub">Admin sign in</p>
+    <form id="login-form">
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Log in</button>
+      <p class="error-msg" id="login-error">Incorrect email or password.</p>
+    </form>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+  <header class="admin-bar">
+    <div class="container">
+      <a href="index.html" class="logo">RUBELS &amp; ANGELS &mdash; ADMIN</a>
+      <button class="btn btn-outline btn-small" id="logout-btn" style="border-color:rgba(255,255,255,.3);color:#fff;">Log out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="reviews">Reviews</button>
+      <button class="tab-btn" data-tab="menu">Menu</button>
+    </div>
+
+    <!-- ============ REVIEWS TAB ============ -->
+    <section id="tab-reviews">
+      <h2 class="section-title">Pending &mdash; needs your approval</h2>
+      <div id="pending-list"><p class="empty-note">Loading&hellip;</p></div>
+
+      <h2 class="section-title">Approved &mdash; live on the site</h2>
+      <div id="approved-list"><p class="empty-note">Loading&hellip;</p></div>
+    </section>
+
+    <!-- ============ MENU TAB ============ -->
+    <section id="tab-menu" class="hidden">
+      <div id="import-banner" class="menu-form-card hidden">
+        <h3 style="font-size:16px;margin-bottom:8px;">Import the starter menu</h3>
+        <p style="font-size:13.5px;color:var(--text-tertiary);margin:0 0 14px;">No menu items in the database yet. This pulls in the placeholder menu so the site isn't empty &mdash; edit or delete items afterward.</p>
+        <button class="btn btn-primary btn-small" id="import-btn">Import starter menu</button>
+      </div>
+
+      <div class="menu-form-card">
+        <h3 id="form-heading" style="font-size:16px;margin-bottom:18px;">Add a menu item</h3>
+        <form id="item-form">
+          <div class="field-row">
+            <div class="field">
+              <label for="item-name">Name *</label>
+              <input type="text" id="item-name" required>
+            </div>
+            <div class="field">
+              <label for="item-category">Category *</label>
+              <select id="item-category" required>
+                <option value="africana">Africana</option>
+                <option value="alacarte">A la carte</option>
+                <option value="pizza">Pizza</option>
+                <option value="dessert">Ice cream &amp; dessert</option>
+                <option value="drinks">Drinks</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="item-desc">Description</label>
+            <input type="text" id="item-desc">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="item-price">Price (&#8358;) *</label>
+              <input type="number" id="item-price" min="0" step="50" required>
+            </div>
+            <div class="field">
+              <label for="item-photo">Photo (optional)</label>
+              <input type="file" id="item-photo" accept="image/*">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn btn-primary" id="item-submit-btn">Add item</button>
+            <button type="button" class="btn btn-outline hidden" id="item-cancel-btn">Cancel edit</button>
+          </div>
+          <p class="error-msg" id="item-error">Something went wrong &mdash; please try again.</p>
+        </form>
+      </div>
+
+      <div id="menu-list"><p class="empty-note">Loading&hellip;</p></div>
+    </section>
+  </div>
+</div>
+
+<script type="module">
+import { auth, db } from './firebase-init.js';
+import {
+  signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { uploadImage } from './cloudinary-upload.js';
+
+const STARTER_MENU = [
+  {category:'africana', name:'Jollof rice', description:'Our classic smoky party jollof', price:2100},
+  {category:'africana', name:'Special fried rice', description:'Wok-tossed with mixed vegetables & liver', price:3700},
+  {category:'africana', name:'Asun', description:'Peppered, char-grilled goat meat', price:5000},
+  {category:'africana', name:'Smokilicious jollof rice', description:'Smoked jollof, grilled chicken & side salad', price:4600},
+  {category:'africana', name:'Peppered chicken', description:'Pan-seared chicken in a fiery pepper sauce', price:3500},
+  {category:'africana', name:'Solo chops platter', description:'A taster spread of our small chops favourites', price:9500},
+  {category:'africana', name:'Asun jollof pasta', description:'Smoky jollof-spiced pasta with asun pepper sauce', price:10000},
+  {category:'alacarte', name:'Crispy chicken nuggets', description:'Hand-breaded, fried to order', price:4700},
+  {category:'alacarte', name:'Chicken and waffles', description:'Golden waffles topped with crispy chicken & syrup', price:6000},
+  {category:'alacarte', name:'Full cut chicken', description:'One whole crispy-fried chicken cut', price:2500},
+  {category:'alacarte', name:'Signature chicken wrap', description:'Grilled chicken, slaw and house sauce in a soft wrap', price:2750},
+  {category:'alacarte', name:'Incredible burger', description:'Double smash patty, cheese, house sauce', price:11500},
+  {category:'alacarte', name:'Dirty loaded fries', description:'Fries piled with shredded beef, cheese & sauce', price:10000},
+  {category:'alacarte', name:'Pasta with chicken fillet', description:'Creamy pasta tossed with grilled chicken fillet', price:9500},
+  {category:'alacarte', name:'R&A pasta special', description:'Our house pasta, shredded beef & smoked sauce', price:8500},
+  {category:'alacarte', name:'Breakfast tower', description:'Salad, fries, yam fries, chicken burger, pancakes, waffles, prawns, nuggets, wings, corndogs & fruit — serves a group', price:60000},
+  {category:'pizza', name:'Special pizza', description:'Loaded house pizza, R&A style', price:13800},
+  {category:'pizza', name:'Chicken suya pizza', description:'Suya-spiced grilled chicken, peppers & onions', price:12500},
+  {category:'pizza', name:'Margherita classic', description:'Tomato, mozzarella & fresh basil', price:9000},
+  {category:'dessert', name:'Chocolate lava cake', description:'Rich, gooey centre, vanilla ice cream', price:1200},
+  {category:'dessert', name:'Vanilla swirl sundae', description:'Vanilla soft serve, caramel & wafer', price:3000},
+  {category:'dessert', name:'Coconut ice cream bowl', description:'Coconut ice cream, toasted coconut flakes', price:3200},
+  {category:'drinks', name:'Crazy milkshake', description:'Our loaded signature shake', price:8500},
+  {category:'drinks', name:'Freak shake', description:'Fully loaded, toppings & all', price:20500},
+  {category:'drinks', name:'Mocktail', description:"Ask your server for today's flavour", price:5000},
+  {category:'drinks', name:'Mango mojito', description:'Fresh mango, mint & lime', price:1500},
+  {category:'drinks', name:'Fruity chapman', description:'House chapman, extra fruity', price:6000}
+];
+
+const CATEGORY_LABELS = {africana:'Africana', alacarte:'A la carte', pizza:'Pizza', dessert:'Ice cream & dessert', drinks:'Drinks'};
+
+function fmtPrice(n){ return '\u20a6'+Number(n).toLocaleString('en-NG'); }
+function starString(n){ var s=''; for(var i=0;i<5;i++){ s+= i<n?'\u2605':'\u2606'; } return s; }
+function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+/* ---------------- auth ---------------- */
+const loginScreen = document.getElementById('login-screen');
+const dashboard = document.getElementById('dashboard');
+const loginForm = document.getElementById('login-form');
+const loginError = document.getElementById('login-error');
+
+loginForm.addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  loginError.classList.remove('show');
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  try{
+    await signInWithEmailAndPassword(auth, email, password);
+  }catch(e){
+    console.error(e);
+    loginError.classList.add('show');
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', function(){ signOut(auth); });
+
+onAuthStateChanged(auth, function(user){
+  if(user){
+    loginScreen.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    loadReviews();
+    loadMenu();
+  }else{
+    dashboard.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+  }
+});
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var tab = btn.getAttribute('data-tab');
+    document.getElementById('tab-reviews').classList.toggle('hidden', tab!=='reviews');
+    document.getElementById('tab-menu').classList.toggle('hidden', tab!=='menu');
+  });
+});
+
+/* ---------------- reviews ---------------- */
+async function loadReviews(){
+  const pendingList = document.getElementById('pending-list');
+  const approvedList = document.getElementById('approved-list');
+  pendingList.innerHTML = '<p class="empty-note">Loading&hellip;</p>';
+  approvedList.innerHTML = '<p class="empty-note">Loading&hellip;</p>';
+  try{
+    const snap = await getDocs(collection(db, 'reviews'));
+    const all = snap.docs.map(function(d){ var r=d.data(); r.id=d.id; return r; });
+    const pending = all.filter(function(r){ return r.status==='pending'; });
+    const approved = all.filter(function(r){ return r.status==='approved'; });
+
+    pendingList.innerHTML = pending.length ? pending.map(reviewCardHTML).join('') : '<p class="empty-note">No reviews waiting for approval.</p>';
+    approvedList.innerHTML = approved.length ? approved.map(reviewCardHTML).join('') : '<p class="empty-note">No approved reviews yet.</p>';
+
+    document.querySelectorAll('[data-approve]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        await updateDoc(doc(db,'reviews',btn.getAttribute('data-approve')), {status:'approved'});
+        loadReviews();
+      });
+    });
+    document.querySelectorAll('[data-delete-review]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if(!confirm('Delete this review permanently?')) return;
+        await deleteDoc(doc(db,'reviews',btn.getAttribute('data-delete-review')));
+        loadReviews();
+      });
+    });
+  }catch(e){
+    console.error(e);
+    pendingList.innerHTML = '<p class="empty-note">Could not load reviews.</p>';
+    approvedList.innerHTML = '';
+  }
+}
+
+function reviewCardHTML(r){
+  const photo = r.photoUrl ? '<img src="'+r.photoUrl+'" alt="">' : '';
+  const approveBtn = r.status==='pending' ? '<button class="btn btn-primary btn-small" data-approve="'+r.id+'">Approve</button>' : '';
+  return '<div class="rev-card">'+photo+
+    '<div class="rev-body">'+
+      '<p class="rev-name">'+escapeHTML(r.name)+'</p>'+
+      '<p class="rev-stars">'+starString(r.rating||5)+'</p>'+
+      '<p class="rev-text">'+escapeHTML(r.text)+'</p>'+
+      '<div class="rev-actions">'+approveBtn+
+        '<button class="btn btn-outline btn-small" data-delete-review="'+r.id+'">Delete</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+/* ---------------- menu ---------------- */
+let editingItemId = null;
+
+async function loadMenu(){
+  const menuList = document.getElementById('menu-list');
+  const importBanner = document.getElementById('import-banner');
+  menuList.innerHTML = '<p class="empty-note">Loading&hellip;</p>';
+  try{
+    const snap = await getDocs(collection(db, 'menuItems'));
+    const items = snap.docs.map(function(d){ var i=d.data(); i.id=d.id; return i; });
+
+    importBanner.classList.toggle('hidden', items.length>0);
+
+    if(!items.length){
+      menuList.innerHTML = '<p class="empty-note">No menu items yet &mdash; import the starter menu above, or add one manually.</p>';
+      return;
+    }
+
+    let html = '';
+    Object.keys(CATEGORY_LABELS).forEach(function(cat){
+      const catItems = items.filter(function(i){ return i.category===cat; });
+      if(!catItems.length) return;
+      html += '<p class="cat-heading">'+CATEGORY_LABELS[cat]+'</p>';
+      html += catItems.map(itemRowHTML).join('');
+    });
+    menuList.innerHTML = html;
+
+    document.querySelectorAll('[data-edit-item]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const item = items.find(function(i){ return i.id===btn.getAttribute('data-edit-item'); });
+        startEdit(item);
+      });
+    });
+    document.querySelectorAll('[data-delete-item]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if(!confirm('Delete this menu item?')) return;
+        await deleteDoc(doc(db,'menuItems',btn.getAttribute('data-delete-item')));
+        loadMenu();
+      });
+    });
+  }catch(e){
+    console.error(e);
+    menuList.innerHTML = '<p class="empty-note">Could not load the menu.</p>';
+  }
+}
+
+function itemRowHTML(item){
+  const photo = item.photoUrl ? '<img src="'+item.photoUrl+'" alt="">' : '';
+  return '<div class="item-row">'+photo+
+    '<div class="item-info"><h4>'+escapeHTML(item.name)+'</h4><p>'+escapeHTML(item.description||'')+'</p></div>'+
+    '<span class="item-price">'+fmtPrice(item.price)+'</span>'+
+    '<div class="item-actions">'+
+      '<button class="btn btn-outline btn-small" data-edit-item="'+item.id+'">Edit</button>'+
+      '<button class="btn btn-outline btn-small" data-delete-item="'+item.id+'">Delete</button>'+
+    '</div>'+
+  '</div>';
+}
+
+function startEdit(item){
+  editingItemId = item.id;
+  document.getElementById('form-heading').textContent = 'Edit menu item';
+  document.getElementById('item-name').value = item.name;
+  document.getElementById('item-category').value = item.category;
+  document.getElementById('item-desc').value = item.description||'';
+  document.getElementById('item-price').value = item.price;
+  document.getElementById('item-submit-btn').textContent = 'Save changes';
+  document.getElementById('item-cancel-btn').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetItemForm(){
+  editingItemId = null;
+  document.getElementById('item-form').reset();
+  document.getElementById('form-heading').textContent = 'Add a menu item';
+  document.getElementById('item-submit-btn').textContent = 'Add item';
+  document.getElementById('item-cancel-btn').classList.add('hidden');
+}
+
+document.getElementById('item-cancel-btn').addEventListener('click', resetItemForm);
+
+document.getElementById('import-btn').addEventListener('click', async function(){
+  this.disabled = true;
+  this.textContent = 'Importing\u2026';
+  try{
+    for(const item of STARTER_MENU){
+      await addDoc(collection(db,'menuItems'), Object.assign({}, item, {createdAt: serverTimestamp()}));
+    }
+    loadMenu();
+  }catch(e){
+    console.error(e);
+    alert('Import failed: '+e.message);
+    this.disabled = false;
+    this.textContent = 'Import starter menu';
+  }
+});
+
+document.getElementById('item-form').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  const errorEl = document.getElementById('item-error');
+  errorEl.classList.remove('show');
+  const submitBtn = document.getElementById('item-submit-btn');
+  const photoFile = document.getElementById('item-photo').files[0] || null;
+
+  const payload = {
+    name: document.getElementById('item-name').value,
+    category: document.getElementById('item-category').value,
+    description: document.getElementById('item-desc').value,
+    price: Number(document.getElementById('item-price').value)
+  };
+
+  submitBtn.disabled = true;
+  const originalLabel = submitBtn.textContent;
+  submitBtn.textContent = 'Saving\u2026';
+
+  try{
+    if(photoFile){
+      payload.photoUrl = await uploadImage(photoFile);
+    }
+    if(editingItemId){
+      await updateDoc(doc(db,'menuItems',editingItemId), payload);
+    }else{
+      payload.createdAt = serverTimestamp();
+      await addDoc(collection(db,'menuItems'), payload);
+    }
+    resetItemForm();
+    loadMenu();
+  }catch(e){
+    console.error(e);
+    errorEl.classList.add('show');
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+  }
+});
+</script>
+</body>
+</html>
