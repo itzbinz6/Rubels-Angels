@@ -303,7 +303,7 @@ footer a:hover{color:var(--gold-soft);}
 
 /* ---------- whatsapp float ---------- */
 .wa-float{
-  position:fixed;bottom:22px;right:22px;width:56px;height:56px;border-radius:50%;
+  position:fixed;bottom:100px;right:22px;width:56px;height:56px;border-radius:50%;
   background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;
   z-index:50;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,0.25);
   transition:transform .2s ease;
@@ -931,7 +931,7 @@ window.RA_REVIEWS = [
 
 <script type="module">
 import { db } from './firebase-init.js';
-import { collection, query, where, orderBy, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { uploadImage } from './cloudinary-upload.js';
 
 (function(){
@@ -1050,14 +1050,22 @@ import { uploadImage } from './cloudinary-upload.js';
     startAuto();
   });
 
-  // Pull approved reviews from Firestore (newest first) and put them ahead of the seed reviews.
+  // Pull approved reviews from Firestore and put them ahead of the seed
+  // reviews, newest first. Sorted here in JS rather than via Firestore's
+  // orderBy() because status+createdAt would need a composite index set up
+  // in the Firebase console — this works with zero extra setup.
   async function loadApprovedReviews(){
     try{
-      var q=query(collection(db,'reviews'), where('status','==','approved'), orderBy('createdAt','desc'));
+      var q=query(collection(db,'reviews'), where('status','==','approved'));
       var snap=await getDocs(q);
       var liveReviews=snap.docs.map(function(d){
         var r=d.data();
-        return {name:r.name, meta:'Verified guest', text:r.text, rating:r.rating, photoUrl:r.photoUrl||null};
+        return {name:r.name, meta:'Verified guest', text:r.text, rating:r.rating, photoUrl:r.photoUrl||null, createdAt:r.createdAt};
+      });
+      liveReviews.sort(function(a,b){
+        var at=(a.createdAt&&a.createdAt.toMillis)?a.createdAt.toMillis():0;
+        var bt=(b.createdAt&&b.createdAt.toMillis)?b.createdAt.toMillis():0;
+        return bt-at;
       });
       data=liveReviews.concat(baseReviews);
       build();

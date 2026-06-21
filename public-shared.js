@@ -6,7 +6,7 @@
 
 import { db } from './firebase-init.js';
 import {
-  collection, getDocs, doc, getDoc, query, where, orderBy, addDoc, serverTimestamp
+  collection, getDocs, doc, getDoc, query, where, addDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 function sortByOrder(list){
@@ -56,12 +56,18 @@ export function mapsUrlFor(loc){
 
 export async function fetchApprovedReviews(){
   try{
-    const q = query(collection(db, 'reviews'), where('status', '==', 'approved'), orderBy('createdAt', 'desc'));
+    const q = query(collection(db, 'reviews'), where('status', '==', 'approved'));
     const snap = await getDocs(q);
-    return snap.docs.map(function(d){
+    const list = snap.docs.map(function(d){
       const r = d.data();
-      return { name: r.name, meta: 'Verified guest', text: r.text, rating: r.rating, photoUrl: r.photoUrl || null };
+      return { name: r.name, meta: 'Verified guest', text: r.text, rating: r.rating, photoUrl: r.photoUrl || null, createdAt: r.createdAt };
     });
+    list.sort(function(a, b){
+      const at = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      const bt = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+      return bt - at;
+    });
+    return list;
   }catch(e){
     console.error('Could not load reviews:', e);
     return [];
