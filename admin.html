@@ -90,6 +90,38 @@ header.admin-bar .logo{font-family:var(--font-display);font-weight:700;font-size
 .cat-heading{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-tertiary);margin:24px 0 10px;font-weight:700;}
 
 .hidden{display:none !important;}
+
+/* ---------- idle/logout message ---------- */
+.idle-msg{background:rgba(200,150,46,0.14);border:1px solid rgba(200,150,46,0.4);color:#8A5A1A;font-size:13px;border-radius:8px;padding:10px 13px;margin-bottom:18px;display:none;}
+.idle-msg.show{display:block;}
+
+/* ---------- mobile responsiveness ---------- */
+@media (max-width:720px){
+  .container{padding:0 16px;}
+  .login-card{padding:28px 22px;}
+  header.admin-bar .container{flex-wrap:wrap;gap:10px;}
+  header.admin-bar .logo{font-size:15.5px;}
+  .tabs{flex-wrap:wrap;gap:8px;margin:20px 0 18px;}
+  .tab-btn{flex:1;min-width:120px;padding:11px 14px;min-height:44px;}
+  .field-row{flex-direction:column;gap:0;}
+  .menu-form-card{padding:18px;}
+  .rev-card{flex-direction:column;}
+  .rev-card img{width:100%;height:160px;}
+  .rev-card .rev-actions{flex-wrap:wrap;}
+  .rev-card .rev-actions .btn{flex:1;min-height:44px;}
+  .item-row{flex-wrap:wrap;}
+  .item-row .item-info{min-width:140px;}
+  .item-row .item-actions{width:100%;justify-content:flex-end;margin-top:8px;}
+  .item-row .item-actions .btn{min-height:40px;}
+  #item-form > div[style*="display:flex"]{flex-wrap:wrap;}
+  #item-form > div[style*="display:flex"] .btn{flex:1;min-width:140px;min-height:44px;}
+  .btn{min-height:44px;}
+  .section-title{font-size:16.5px;}
+}
+@media (max-width:380px){
+  .login-card{padding:24px 18px;}
+  header.admin-bar .logo{font-size:13.5px;}
+}
 </style>
 </head>
 <body>
@@ -98,6 +130,7 @@ header.admin-bar .logo{font-family:var(--font-display);font-weight:700;font-size
   <div class="login-card">
     <h1>Rubels &amp; Angels</h1>
     <p class="sub">Admin sign in</p>
+    <p class="idle-msg" id="idle-msg">You were logged out after 5 minutes of inactivity. Please sign in again.</p>
     <form id="login-form">
       <div class="field">
         <label for="login-email">Email</label>
@@ -125,6 +158,9 @@ header.admin-bar .logo{font-family:var(--font-display);font-weight:700;font-size
     <div class="tabs">
       <button class="tab-btn active" data-tab="reviews">Reviews</button>
       <button class="tab-btn" data-tab="menu">Menu</button>
+      <button class="tab-btn" data-tab="locations">Locations</button>
+      <button class="tab-btn" data-tab="team">Team</button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
     </div>
 
     <!-- ============ REVIEWS TAB ============ -->
@@ -187,6 +223,200 @@ header.admin-bar .logo{font-family:var(--font-display);font-weight:700;font-size
 
       <div id="menu-list"><p class="empty-note">Loading&hellip;</p></div>
     </section>
+
+    <!-- ============ LOCATIONS TAB ============ -->
+    <section id="tab-locations" class="hidden">
+      <div id="loc-import-banner" class="menu-form-card hidden">
+        <h3 style="font-size:16px;margin-bottom:8px;">Import the starter locations</h3>
+        <p style="font-size:13.5px;color:var(--text-tertiary);margin:0 0 14px;">No branches in the database yet. This pulls in the four current branches (Surulere, Akoka, Festac, Isolo) &mdash; edit or delete afterward. Akoka is imported with its phone number already flagged for verification.</p>
+        <button class="btn btn-primary btn-small" id="loc-import-btn">Import starter locations</button>
+      </div>
+
+      <div class="menu-form-card">
+        <h3 id="loc-form-heading" style="font-size:16px;margin-bottom:18px;">Add a location</h3>
+        <form id="loc-form">
+          <div class="field-row">
+            <div class="field">
+              <label for="loc-name">Branch name *</label>
+              <input type="text" id="loc-name" required placeholder="e.g. Surulere">
+            </div>
+            <div class="field">
+              <label for="loc-tag">Tag *</label>
+              <select id="loc-tag" required>
+                <option value="Branch">Branch</option>
+                <option value="Flagship">Flagship</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="loc-address">Street address *</label>
+            <input type="text" id="loc-address" required placeholder="e.g. 52 Ogunlana Drive">
+          </div>
+          <div class="field">
+            <label for="loc-city">City / state line</label>
+            <input type="text" id="loc-city" placeholder="e.g. Surulere, Lagos 101283">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="loc-price-min">Price from (&#8358;) *</label>
+              <input type="number" id="loc-price-min" min="0" step="500" required>
+            </div>
+            <div class="field">
+              <label for="loc-price-max">Price to (&#8358;) *</label>
+              <input type="number" id="loc-price-max" min="0" step="500" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="loc-rating">Rating (0&ndash;5) *</label>
+              <input type="number" id="loc-rating" min="0" max="5" step="0.1" required>
+            </div>
+            <div class="field">
+              <label for="loc-review-count">Review count *</label>
+              <input type="number" id="loc-review-count" min="0" step="1" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="loc-hours">Opening hours text *</label>
+            <input type="text" id="loc-hours" required placeholder="e.g. Opens 8am daily, or 8am&ndash;11pm Mon&ndash;Sat">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="loc-phone-display">Phone (display) *</label>
+              <input type="text" id="loc-phone-display" required placeholder="e.g. 0901 193 8616">
+            </div>
+            <div class="field">
+              <label for="loc-phone-tel">Phone (tel: link) *</label>
+              <input type="text" id="loc-phone-tel" required placeholder="e.g. +2349011938616">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="loc-whatsapp">WhatsApp number *</label>
+              <input type="text" id="loc-whatsapp" required placeholder="e.g. 2349011938616 (no + or spaces)">
+            </div>
+            <div class="field">
+              <label for="loc-order">Display order</label>
+              <input type="number" id="loc-order" min="0" step="1" value="0">
+            </div>
+          </div>
+          <div class="field">
+            <label for="loc-glovo">Glovo order link (optional)</label>
+            <input type="url" id="loc-glovo" placeholder="https://glovoapp.com/...">
+          </div>
+          <div class="field">
+            <label for="loc-maps">Google Maps link (optional)</label>
+            <input type="url" id="loc-maps" placeholder="https://maps.app.goo.gl/... or share link from Google">
+          </div>
+          <div class="field">
+            <label>Available for</label>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--text-secondary);">
+              <label style="display:flex;align-items:center;gap:6px;font-weight:400;text-transform:none;letter-spacing:0;"><input type="checkbox" class="loc-badge-cb" value="Dine-in" style="width:auto;min-height:auto;" checked> Dine-in</label>
+              <label style="display:flex;align-items:center;gap:6px;font-weight:400;text-transform:none;letter-spacing:0;"><input type="checkbox" class="loc-badge-cb" value="Takeaway" style="width:auto;min-height:auto;" checked> Takeaway</label>
+              <label style="display:flex;align-items:center;gap:6px;font-weight:400;text-transform:none;letter-spacing:0;"><input type="checkbox" class="loc-badge-cb" value="Delivery" style="width:auto;min-height:auto;"> Delivery</label>
+              <label style="display:flex;align-items:center;gap:6px;font-weight:400;text-transform:none;letter-spacing:0;"><input type="checkbox" class="loc-badge-cb" value="No-contact delivery" style="width:auto;min-height:auto;"> No-contact delivery</label>
+            </div>
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;letter-spacing:0;"><input type="checkbox" id="loc-featured" style="width:auto;min-height:auto;"> Show as the large featured tile on the homepage</label>
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:400;text-transform:none;letter-spacing:0;"><input type="checkbox" id="loc-verified" style="width:auto;min-height:auto;" checked> Phone number is confirmed correct</label>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn btn-primary" id="loc-submit-btn">Add location</button>
+            <button type="button" class="btn btn-outline hidden" id="loc-cancel-btn">Cancel edit</button>
+          </div>
+          <p class="error-msg" id="loc-error">Something went wrong &mdash; please try again.</p>
+        </form>
+      </div>
+
+      <div id="loc-list"><p class="empty-note">Loading&hellip;</p></div>
+    </section>
+
+    <!-- ============ TEAM TAB ============ -->
+    <section id="tab-team" class="hidden">
+      <div id="team-import-banner" class="menu-form-card hidden">
+        <h3 style="font-size:16px;margin-bottom:8px;">Import the starter team roles</h3>
+        <p style="font-size:13.5px;color:var(--text-tertiary);margin:0 0 14px;">No team roles in the database yet. This pulls in the four current role cards (no names or photos) &mdash; edit afterward to add real names and photos.</p>
+        <button class="btn btn-primary btn-small" id="team-import-btn">Import starter roles</button>
+      </div>
+
+      <div class="menu-form-card">
+        <h3 id="team-form-heading" style="font-size:16px;margin-bottom:8px;">Add a team role</h3>
+        <p style="font-size:13px;color:var(--text-tertiary);margin:0 0 18px;">A photo is optional &mdash; if you leave it out, the card keeps its current gradient-and-initials design instead of a broken image.</p>
+        <form id="team-form">
+          <div class="field-row">
+            <div class="field">
+              <label for="team-role">Role title *</label>
+              <input type="text" id="team-role" required placeholder="e.g. Managing Director">
+            </div>
+            <div class="field">
+              <label for="team-name">Person's name (optional)</label>
+              <input type="text" id="team-name" placeholder="Shown under the role">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="team-photo">Photo (optional)</label>
+              <input type="file" id="team-photo" accept="image/*">
+            </div>
+            <div class="field">
+              <label for="team-order">Display order</label>
+              <input type="number" id="team-order" min="0" step="1" value="0">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn btn-primary" id="team-submit-btn">Add role</button>
+            <button type="button" class="btn btn-outline hidden" id="team-cancel-btn">Cancel edit</button>
+          </div>
+          <p class="error-msg" id="team-error">Something went wrong &mdash; please try again.</p>
+        </form>
+      </div>
+
+      <div id="team-list"><p class="empty-note">Loading&hellip;</p></div>
+    </section>
+
+    <!-- ============ SETTINGS TAB ============ -->
+    <section id="tab-settings" class="hidden">
+      <div class="menu-form-card">
+        <h3 style="font-size:16px;margin-bottom:6px;">Site-wide settings</h3>
+        <p style="font-size:13.5px;color:var(--text-tertiary);margin:0 0 20px;">Social links, WhatsApp number, and the homepage's headline stats. Leave a field blank to keep whatever is already on the live site.</p>
+        <form id="settings-form">
+          <div class="field-row">
+            <div class="field">
+              <label for="set-ig">Instagram URL</label>
+              <input type="url" id="set-ig" placeholder="https://www.instagram.com/rubelsandangels/">
+            </div>
+            <div class="field">
+              <label for="set-fb">Facebook URL</label>
+              <input type="url" id="set-fb" placeholder="https://www.facebook.com/rubelsandangels/">
+            </div>
+          </div>
+          <div class="field">
+            <label for="set-wa">General WhatsApp number</label>
+            <input type="text" id="set-wa" placeholder="e.g. 2349011938616 (no + or spaces) &mdash; used for the floating WhatsApp button and footer">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="set-rating">Homepage average rating</label>
+              <input type="number" id="set-rating" min="0" max="5" step="0.1" placeholder="e.g. 4.0">
+            </div>
+            <div class="field">
+              <label for="set-reviews">Homepage review count</label>
+              <input type="number" id="set-reviews" min="0" step="1" placeholder="e.g. 834">
+            </div>
+          </div>
+          <div class="field">
+            <label for="set-hours">Homepage hours text</label>
+            <input type="text" id="set-hours" placeholder="e.g. 8am&ndash;11pm">
+          </div>
+          <button type="submit" class="btn btn-primary">Save settings</button>
+          <p class="error-msg" id="settings-error">Something went wrong &mdash; please try again.</p>
+          <div class="form-success-msg" id="settings-success" style="display:none;color:#3B6D11;font-size:13.5px;margin-top:12px;">Settings saved &mdash; live on the site now.</div>
+        </form>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -196,7 +426,7 @@ import {
   signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, serverTimestamp
+  collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, serverTimestamp, setDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { uploadImage } from './cloudinary-upload.js';
 
@@ -232,15 +462,60 @@ const STARTER_MENU = [
 
 const CATEGORY_LABELS = {africana:'Africana', alacarte:'A la carte', pizza:'Pizza', dessert:'Ice cream & dessert', drinks:'Drinks'};
 
+const STARTER_LOCATIONS = [
+  {name:'Surulere', tag:'Flagship', address:'52 Ogunlana Drive', cityLine:'Surulere, Lagos 101283', priceMin:10000, priceMax:40000, rating:4.0, reviewCount:834, hours:'Opens 8am daily', phoneDisplay:'0901 193 8616', phoneTel:'+2349011938616', whatsapp:'2349011938616', glovoLink:'https://glovoapp.com/ng/en/island-lagos/rubels-and-angels-restaurant-los', mapsLink:'', badges:['Dine-in','Takeaway','No-contact delivery'], featured:true, verified:true, order:0},
+  {name:'Akoka', tag:'Branch', address:'11 University Road', cityLine:'Akoka, Lagos 100213', priceMin:10000, priceMax:20000, rating:4.0, reviewCount:190, hours:'Opens 8am daily', phoneDisplay:'0703 572 7288', phoneTel:'+2347035727288', whatsapp:'2347035727288', glovoLink:'https://glovoapp.com/ng/en/island-lagos/rubelsangels-akoka-los', mapsLink:'', badges:['Dine-in','Takeaway','Delivery'], featured:false, verified:false, order:1},
+  {name:'Festac', tag:'Branch', address:'Plot 24, Festac Access Road', cityLine:'Amuwo Odofin, Lagos 102102', priceMin:10000, priceMax:50000, rating:4.0, reviewCount:65, hours:'Opens 8am daily', phoneDisplay:'0901 193 8616', phoneTel:'+2349011938616', whatsapp:'2349011938616', glovoLink:'https://glovoapp.com/ng/en/festac/rubels-and-angels-restaurant-festac-tac', mapsLink:'', badges:['Dine-in','Takeaway'], featured:false, verified:true, order:2},
+  {name:'Isolo', tag:'Branch', address:'42 Osolo Way', cityLine:'Ajao Estate, Isolo, Lagos 102214', priceMin:10000, priceMax:20000, rating:4.3, reviewCount:9, hours:'Opens 8am daily', phoneDisplay:'0704 390 4239', phoneTel:'+2347043904239', whatsapp:'2347043904239', glovoLink:'', mapsLink:'', badges:['Dine-in','Takeaway'], featured:false, verified:true, order:3}
+];
+
+const STARTER_TEAM = [
+  {role:'Managing Director', name:'', photoUrl:'', order:0},
+  {role:'Chief Operating Officer', name:'', photoUrl:'', order:1},
+  {role:'Food & Beverage Manager', name:'', photoUrl:'', order:2},
+  {role:'State Coordinator', name:'', photoUrl:'', order:3}
+];
+
+const LOC_BADGE_OPTIONS = ['Dine-in','Takeaway','Delivery','No-contact delivery'];
+
 function fmtPrice(n){ return '\u20a6'+Number(n).toLocaleString('en-NG'); }
 function starString(n){ var s=''; for(var i=0;i<5;i++){ s+= i<n?'\u2605':'\u2606'; } return s; }
 function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function initialsFromRole(role){
+  var words = String(role||'').trim().split(/\s+/).filter(Boolean);
+  var letters = words.map(function(w){ return w==='&' ? '&' : w[0].toUpperCase(); });
+  return letters.join('').slice(0,3) || '?';
+}
 
 /* ---------------- auth ---------------- */
 const loginScreen = document.getElementById('login-screen');
 const dashboard = document.getElementById('dashboard');
 const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
+const idleMsg = document.getElementById('idle-msg');
+
+/* ---------------- idle auto-logout (5 minutes) ---------------- */
+const IDLE_LIMIT_MS = 5 * 60 * 1000;
+let idleTimer = null;
+let loggedOutByIdle = false;
+
+function clearIdleTimer(){
+  if(idleTimer){ clearTimeout(idleTimer); idleTimer = null; }
+}
+function resetIdleTimer(){
+  if(!auth.currentUser) return;
+  clearIdleTimer();
+  idleTimer = setTimeout(function(){
+    loggedOutByIdle = true;
+    signOut(auth);
+  }, IDLE_LIMIT_MS);
+}
+['mousemove','mousedown','keydown','touchstart','scroll','wheel'].forEach(function(evt){
+  document.addEventListener(evt, resetIdleTimer, {passive:true});
+});
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden) resetIdleTimer();
+});
 
 loginForm.addEventListener('submit', async function(ev){
   ev.preventDefault();
@@ -261,11 +536,21 @@ onAuthStateChanged(auth, function(user){
   if(user){
     loginScreen.classList.add('hidden');
     dashboard.classList.remove('hidden');
+    idleMsg.classList.remove('show');
+    resetIdleTimer();
     loadReviews();
     loadMenu();
+    loadLocations();
+    loadTeam();
+    loadSettings();
   }else{
+    clearIdleTimer();
     dashboard.classList.add('hidden');
     loginScreen.classList.remove('hidden');
+    if(loggedOutByIdle){
+      idleMsg.classList.add('show');
+      loggedOutByIdle = false;
+    }
   }
 });
 
@@ -277,6 +562,9 @@ document.querySelectorAll('.tab-btn').forEach(function(btn){
     var tab = btn.getAttribute('data-tab');
     document.getElementById('tab-reviews').classList.toggle('hidden', tab!=='reviews');
     document.getElementById('tab-menu').classList.toggle('hidden', tab!=='menu');
+    document.getElementById('tab-locations').classList.toggle('hidden', tab!=='locations');
+    document.getElementById('tab-team').classList.toggle('hidden', tab!=='team');
+    document.getElementById('tab-settings').classList.toggle('hidden', tab!=='settings');
   });
 });
 
@@ -456,6 +744,353 @@ document.getElementById('item-form').addEventListener('submit', async function(e
     }
     resetItemForm();
     loadMenu();
+  }catch(e){
+    console.error(e);
+    errorEl.classList.add('show');
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+  }
+});
+
+/* ---------------- locations ---------------- */
+let editingLocId = null;
+
+async function loadLocations(){
+  const locList = document.getElementById('loc-list');
+  const importBanner = document.getElementById('loc-import-banner');
+  locList.innerHTML = '<p class="empty-note">Loading&hellip;</p>';
+  try{
+    const snap = await getDocs(collection(db, 'locations'));
+    const locs = snap.docs.map(function(d){ var l=d.data(); l.id=d.id; return l; });
+    locs.sort(function(a,b){ return (a.order||0)-(b.order||0); });
+
+    importBanner.classList.toggle('hidden', locs.length>0);
+
+    if(!locs.length){
+      locList.innerHTML = '<p class="empty-note">No locations yet &mdash; import the starter branches above, or add one manually.</p>';
+      return;
+    }
+
+    locList.innerHTML = locs.map(locRowHTML).join('');
+
+    document.querySelectorAll('[data-edit-loc]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const loc = locs.find(function(l){ return l.id===btn.getAttribute('data-edit-loc'); });
+        startLocEdit(loc);
+      });
+    });
+    document.querySelectorAll('[data-delete-loc]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if(!confirm('Delete this location? It will disappear from the locations page, reserve page, and homepage immediately.')) return;
+        await deleteDoc(doc(db,'locations',btn.getAttribute('data-delete-loc')));
+        loadLocations();
+      });
+    });
+  }catch(e){
+    console.error(e);
+    locList.innerHTML = '<p class="empty-note">Could not load locations.</p>';
+  }
+}
+
+function locRowHTML(loc){
+  const warn = loc.verified===false ? '<span class="warn-badge">&#9888; Unverified phone</span>' : '';
+  const featured = loc.featured ? ' &middot; <strong>Featured on homepage</strong>' : '';
+  const sub = loc.address+(loc.cityLine?(', '+loc.cityLine):'')+' &middot; '+loc.hours+featured;
+  return '<div class="item-row">'+
+    '<div class="item-info"><h4>'+escapeHTML(loc.name)+' <span style="font-weight:400;font-size:12px;color:var(--text-tertiary);">('+escapeHTML(loc.tag)+')</span> '+warn+'</h4><p>'+sub+'</p></div>'+
+    '<span class="item-price">'+fmtPrice(loc.priceMin)+'&ndash;'+fmtPrice(loc.priceMax)+'</span>'+
+    '<div class="item-actions">'+
+      '<button class="btn btn-outline btn-small" data-edit-loc="'+loc.id+'">Edit</button>'+
+      '<button class="btn btn-outline btn-small" data-delete-loc="'+loc.id+'">Delete</button>'+
+    '</div>'+
+  '</div>';
+}
+
+function startLocEdit(loc){
+  editingLocId = loc.id;
+  document.getElementById('loc-form-heading').textContent = 'Edit '+loc.name;
+  document.getElementById('loc-name').value = loc.name;
+  document.getElementById('loc-tag').value = loc.tag;
+  document.getElementById('loc-address').value = loc.address;
+  document.getElementById('loc-city').value = loc.cityLine||'';
+  document.getElementById('loc-price-min').value = loc.priceMin;
+  document.getElementById('loc-price-max').value = loc.priceMax;
+  document.getElementById('loc-rating').value = loc.rating;
+  document.getElementById('loc-review-count').value = loc.reviewCount;
+  document.getElementById('loc-hours').value = loc.hours||'';
+  document.getElementById('loc-phone-display').value = loc.phoneDisplay;
+  document.getElementById('loc-phone-tel').value = loc.phoneTel;
+  document.getElementById('loc-whatsapp').value = loc.whatsapp;
+  document.getElementById('loc-order').value = loc.order||0;
+  document.getElementById('loc-glovo').value = loc.glovoLink||'';
+  document.getElementById('loc-maps').value = loc.mapsLink||'';
+  document.querySelectorAll('.loc-badge-cb').forEach(function(cb){
+    cb.checked = (loc.badges||[]).indexOf(cb.value) !== -1;
+  });
+  document.getElementById('loc-featured').checked = !!loc.featured;
+  document.getElementById('loc-verified').checked = loc.verified!==false;
+  document.getElementById('loc-submit-btn').textContent = 'Save changes';
+  document.getElementById('loc-cancel-btn').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetLocForm(){
+  editingLocId = null;
+  document.getElementById('loc-form').reset();
+  document.getElementById('loc-form-heading').textContent = 'Add a location';
+  document.getElementById('loc-submit-btn').textContent = 'Add location';
+  document.getElementById('loc-cancel-btn').classList.add('hidden');
+  document.getElementById('loc-verified').checked = true;
+}
+
+document.getElementById('loc-cancel-btn').addEventListener('click', resetLocForm);
+
+document.getElementById('loc-import-btn').addEventListener('click', async function(){
+  this.disabled = true;
+  this.textContent = 'Importing\u2026';
+  try{
+    for(const loc of STARTER_LOCATIONS){
+      await addDoc(collection(db,'locations'), Object.assign({}, loc, {createdAt: serverTimestamp()}));
+    }
+    loadLocations();
+  }catch(e){
+    console.error(e);
+    alert('Import failed: '+e.message);
+    this.disabled = false;
+    this.textContent = 'Import starter locations';
+  }
+});
+
+document.getElementById('loc-form').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  const errorEl = document.getElementById('loc-error');
+  errorEl.classList.remove('show');
+  const submitBtn = document.getElementById('loc-submit-btn');
+  const originalLabel = submitBtn.textContent;
+
+  const badges = Array.from(document.querySelectorAll('.loc-badge-cb:checked')).map(function(cb){ return cb.value; });
+
+  const payload = {
+    name: document.getElementById('loc-name').value,
+    tag: document.getElementById('loc-tag').value,
+    address: document.getElementById('loc-address').value,
+    cityLine: document.getElementById('loc-city').value,
+    priceMin: Number(document.getElementById('loc-price-min').value),
+    priceMax: Number(document.getElementById('loc-price-max').value),
+    rating: Number(document.getElementById('loc-rating').value),
+    reviewCount: Number(document.getElementById('loc-review-count').value),
+    hours: document.getElementById('loc-hours').value,
+    phoneDisplay: document.getElementById('loc-phone-display').value,
+    phoneTel: document.getElementById('loc-phone-tel').value,
+    whatsapp: document.getElementById('loc-whatsapp').value,
+    order: Number(document.getElementById('loc-order').value || 0),
+    glovoLink: document.getElementById('loc-glovo').value,
+    mapsLink: document.getElementById('loc-maps').value,
+    badges: badges,
+    featured: document.getElementById('loc-featured').checked,
+    verified: document.getElementById('loc-verified').checked
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving\u2026';
+
+  try{
+    if(editingLocId){
+      await updateDoc(doc(db,'locations',editingLocId), payload);
+    }else{
+      payload.createdAt = serverTimestamp();
+      await addDoc(collection(db,'locations'), payload);
+    }
+    resetLocForm();
+    loadLocations();
+  }catch(e){
+    console.error(e);
+    errorEl.classList.add('show');
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+  }
+});
+
+/* ---------------- team ---------------- */
+let editingTeamId = null;
+
+async function loadTeam(){
+  const teamList = document.getElementById('team-list');
+  const importBanner = document.getElementById('team-import-banner');
+  teamList.innerHTML = '<p class="empty-note">Loading&hellip;</p>';
+  try{
+    const snap = await getDocs(collection(db, 'team'));
+    const roles = snap.docs.map(function(d){ var t=d.data(); t.id=d.id; return t; });
+    roles.sort(function(a,b){ return (a.order||0)-(b.order||0); });
+
+    importBanner.classList.toggle('hidden', roles.length>0);
+
+    if(!roles.length){
+      teamList.innerHTML = '<p class="empty-note">No team roles yet &mdash; import the starter roles above, or add one manually.</p>';
+      return;
+    }
+
+    teamList.innerHTML = roles.map(teamRowHTML).join('');
+
+    document.querySelectorAll('[data-edit-team]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const role = roles.find(function(r){ return r.id===btn.getAttribute('data-edit-team'); });
+        startTeamEdit(role);
+      });
+    });
+    document.querySelectorAll('[data-delete-team]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if(!confirm('Delete this team role card from the about page?')) return;
+        await deleteDoc(doc(db,'team',btn.getAttribute('data-delete-team')));
+        loadTeam();
+      });
+    });
+  }catch(e){
+    console.error(e);
+    teamList.innerHTML = '<p class="empty-note">Could not load team roles.</p>';
+  }
+}
+
+function teamRowHTML(role){
+  const photo = role.photoUrl ? '<img src="'+role.photoUrl+'" alt="">' : '<div style="width:48px;height:48px;border-radius:6px;background:linear-gradient(150deg,#1E1813,#15110D);color:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;flex-shrink:0;">'+initialsFromRole(role.role)+'</div>';
+  return '<div class="item-row">'+photo+
+    '<div class="item-info"><h4>'+escapeHTML(role.role)+'</h4><p>'+(role.name?escapeHTML(role.name):'No name set &mdash; shows initials only')+'</p></div>'+
+    '<div class="item-actions">'+
+      '<button class="btn btn-outline btn-small" data-edit-team="'+role.id+'">Edit</button>'+
+      '<button class="btn btn-outline btn-small" data-delete-team="'+role.id+'">Delete</button>'+
+    '</div>'+
+  '</div>';
+}
+
+function startTeamEdit(role){
+  editingTeamId = role.id;
+  document.getElementById('team-form-heading').textContent = 'Edit '+role.role;
+  document.getElementById('team-role').value = role.role;
+  document.getElementById('team-name').value = role.name||'';
+  document.getElementById('team-order').value = role.order||0;
+  document.getElementById('team-submit-btn').textContent = 'Save changes';
+  document.getElementById('team-cancel-btn').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetTeamForm(){
+  editingTeamId = null;
+  document.getElementById('team-form').reset();
+  document.getElementById('team-form-heading').textContent = 'Add a team role';
+  document.getElementById('team-submit-btn').textContent = 'Add role';
+  document.getElementById('team-cancel-btn').classList.add('hidden');
+}
+
+document.getElementById('team-cancel-btn').addEventListener('click', resetTeamForm);
+
+document.getElementById('team-import-btn').addEventListener('click', async function(){
+  this.disabled = true;
+  this.textContent = 'Importing\u2026';
+  try{
+    for(const role of STARTER_TEAM){
+      await addDoc(collection(db,'team'), Object.assign({}, role, {createdAt: serverTimestamp()}));
+    }
+    loadTeam();
+  }catch(e){
+    console.error(e);
+    alert('Import failed: '+e.message);
+    this.disabled = false;
+    this.textContent = 'Import starter roles';
+  }
+});
+
+document.getElementById('team-form').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  const errorEl = document.getElementById('team-error');
+  errorEl.classList.remove('show');
+  const submitBtn = document.getElementById('team-submit-btn');
+  const originalLabel = submitBtn.textContent;
+  const photoFile = document.getElementById('team-photo').files[0] || null;
+
+  const payload = {
+    role: document.getElementById('team-role').value,
+    name: document.getElementById('team-name').value,
+    order: Number(document.getElementById('team-order').value || 0)
+  };
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving\u2026';
+
+  try{
+    if(photoFile){
+      payload.photoUrl = await uploadImage(photoFile);
+    }
+    if(editingTeamId){
+      await updateDoc(doc(db,'team',editingTeamId), payload);
+    }else{
+      payload.photoUrl = payload.photoUrl || '';
+      payload.createdAt = serverTimestamp();
+      await addDoc(collection(db,'team'), payload);
+    }
+    resetTeamForm();
+    loadTeam();
+  }catch(e){
+    console.error(e);
+    errorEl.classList.add('show');
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+  }
+});
+
+/* ---------------- settings ---------------- */
+async function loadSettings(){
+  try{
+    const snap = await getDoc(doc(db,'settings','site'));
+    if(!snap.exists()) return;
+    const s = snap.data();
+    if(s.instagramUrl) document.getElementById('set-ig').value = s.instagramUrl;
+    if(s.facebookUrl) document.getElementById('set-fb').value = s.facebookUrl;
+    if(s.whatsapp) document.getElementById('set-wa').value = s.whatsapp;
+    if(s.rating!=null) document.getElementById('set-rating').value = s.rating;
+    if(s.reviewCount!=null) document.getElementById('set-reviews').value = s.reviewCount;
+    if(s.hoursText) document.getElementById('set-hours').value = s.hoursText;
+  }catch(e){
+    console.error('Could not load settings:', e);
+  }
+}
+
+document.getElementById('settings-form').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  const errorEl = document.getElementById('settings-error');
+  const successEl = document.getElementById('settings-success');
+  errorEl.classList.remove('show');
+  successEl.style.display = 'none';
+  const submitBtn = ev.target.querySelector('button[type="submit"]');
+  const originalLabel = submitBtn.textContent;
+
+  // Blank fields are left out of the payload so they don't overwrite
+  // existing live values with empty strings (per the form's own copy:
+  // "Leave a field blank to keep whatever is already on the live site").
+  const payload = {};
+  const ig = document.getElementById('set-ig').value;
+  const fb = document.getElementById('set-fb').value;
+  const wa = document.getElementById('set-wa').value;
+  const rating = document.getElementById('set-rating').value;
+  const reviews = document.getElementById('set-reviews').value;
+  const hours = document.getElementById('set-hours').value;
+  if(ig) payload.instagramUrl = ig;
+  if(fb) payload.facebookUrl = fb;
+  if(wa) payload.whatsapp = wa;
+  if(rating) payload.rating = Number(rating);
+  if(reviews) payload.reviewCount = Number(reviews);
+  if(hours) payload.hoursText = hours;
+  payload.updatedAt = serverTimestamp();
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving\u2026';
+
+  try{
+    await setDoc(doc(db,'settings','site'), payload, {merge:true});
+    successEl.style.display = 'block';
+    setTimeout(function(){ successEl.style.display = 'none'; }, 4000);
   }catch(e){
     console.error(e);
     errorEl.classList.add('show');

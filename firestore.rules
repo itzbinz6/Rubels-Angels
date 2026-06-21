@@ -28,5 +28,26 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null;
     }
+
+    // Locations: public can read (locations, reserve & homepage pages render
+    // these), only a logged-in admin can add/edit/delete branches.
+    match /locations/{locationId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Team roles: public can read (the about page renders these),
+    // only a logged-in admin can add/edit/delete.
+    match /team/{teamId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Site-wide settings (social links, general WhatsApp number, homepage
+    // stats): public can read, only a logged-in admin can write.
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }

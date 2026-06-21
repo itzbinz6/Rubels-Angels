@@ -523,9 +523,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
     </div>
     <div class="hero-meta">
       <div><p data-count="4" data-decimals="0">0</p><p>Lagos locations</p></div>
-      <div><p data-count="4.0" data-decimals="1">0</p><p>Average rating</p></div>
-      <div><p data-count="834" data-decimals="0" data-suffix="+">0</p><p>Google reviews</p></div>
-      <div><p>8am&ndash;11pm</p><p>Open daily</p></div>
+      <div><p data-count="4.0" data-decimals="1" id="hero-rating">0</p><p>Average rating</p></div>
+      <div><p data-count="834" data-decimals="0" data-suffix="+" id="hero-reviews">0</p><p>Google reviews</p></div>
+      <div><p id="hero-hours">8am&ndash;11pm</p><p>Open daily</p></div>
     </div>
   </div>
 </section>
@@ -554,9 +554,9 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 <section class="stats-band">
   <div class="container grid-4">
     <div class="fade-in"><p class="stat-num" data-count="4" data-decimals="0">0</p><p class="stat-label">Lagos locations</p></div>
-    <div class="fade-in"><p class="stat-num" data-count="834" data-decimals="0" data-suffix="+">0</p><p class="stat-label">Google reviews</p></div>
-    <div class="fade-in"><p class="stat-num" data-count="4.0" data-decimals="1">0</p><p class="stat-label">Average rating</p></div>
-    <div class="fade-in"><p class="stat-num" style="font-size:clamp(2rem,4vw,2.8rem);">8&ndash;11</p><p class="stat-label">Open daily, 8am&ndash;11pm</p></div>
+    <div class="fade-in"><p class="stat-num" data-count="834" data-decimals="0" data-suffix="+" id="band-reviews">0</p><p class="stat-label">Google reviews</p></div>
+    <div class="fade-in"><p class="stat-num" data-count="4.0" data-decimals="1" id="band-rating">0</p><p class="stat-label">Average rating</p></div>
+    <div class="fade-in"><p class="stat-num" style="font-size:clamp(2rem,4vw,2.8rem);">8&ndash;11</p><p class="stat-label" id="band-hours-label">Open daily, 8am&ndash;11pm</p></div>
   </div>
 </section>
 
@@ -615,10 +615,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 <section style="background:var(--bg-secondary);">
   <div class="container">
     <div class="rating-hero fade-in">
-      <span class="rating-big">4.0</span>
+      <span class="rating-big" id="rating-hero-big">4.0</span>
       <div>
-        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
-        <p style="margin:4px 0 0;font-size:13.5px;color:var(--text-tertiary);">Based on 834 Google reviews &middot; Surulere flagship</p>
+        <div class="stars" id="rating-hero-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <p style="margin:4px 0 0;font-size:13.5px;color:var(--text-tertiary);" id="rating-hero-sub">Based on 834 Google reviews &middot; Surulere flagship</p>
       </div>
     </div>
     <p class="eyebrow"><span class="dot"></span> What people are saying</p>
@@ -1115,6 +1115,37 @@ import { uploadImage } from './cloudinary-upload.js';
     });
   }
 })();
+</script>
+
+<script type="module">
+import { fetchSettings, applyGlobalChrome, starString } from './public-shared.js';
+
+async function applySettingsToHomepage(){
+  const settings = await fetchSettings();
+  applyGlobalChrome(settings);
+
+  const rating = settings.rating!=null ? Number(settings.rating) : null;
+  const reviewCount = settings.reviewCount!=null ? Number(settings.reviewCount) : null;
+  const hoursText = settings.hoursText || null;
+
+  if(rating!=null){
+    document.getElementById('hero-rating').setAttribute('data-count', rating);
+    document.getElementById('band-rating').setAttribute('data-count', rating);
+    document.getElementById('rating-hero-big').textContent = rating.toFixed(1);
+    document.getElementById('rating-hero-stars').textContent = starString(rating);
+  }
+  if(reviewCount!=null){
+    document.getElementById('hero-reviews').setAttribute('data-count', reviewCount);
+    document.getElementById('band-reviews').setAttribute('data-count', reviewCount);
+    document.getElementById('rating-hero-sub').textContent = 'Based on '+reviewCount.toLocaleString('en-NG')+' Google reviews \u00b7 Surulere flagship';
+  }
+  if(hoursText){
+    document.getElementById('hero-hours').textContent = hoursText;
+    document.getElementById('band-hours-label').textContent = 'Open daily, '+hoursText;
+  }
+}
+
+applySettingsToHomepage();
 </script>
 </body>
 </html>
