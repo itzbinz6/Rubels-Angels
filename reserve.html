@@ -945,7 +945,7 @@ const ICON_CALL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 
 function branchCardHTML(loc){
   const warn = loc.verified===false ? ' <span class="warn-badge">&#9888; Verify</span>' : '';
-  return '<div class="branch-card fade-in">'+
+  return '<div class="branch-card fade-in visible">'+
     '<div class="branch-card-top">'+
       '<div class="branch-icon">'+ICON_PIN_SVG+'</div>'+
       '<div><p class="branch-name">'+escapeHTML(loc.name)+warn+'</p><p class="branch-sub">'+escapeHTML(loc.address)+'</p></div>'+

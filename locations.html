@@ -894,7 +894,7 @@ function locCardHTML(loc){
   const verifiedWarn = loc.verified===false ? '<span class="warn-badge">&#9888; Verify number</span>' : '';
   const glovoBtn = loc.glovoLink ? '<a class="btn btn-outline" href="'+loc.glovoLink+'" target="_blank" rel="noopener">Order on Glovo</a>' : '';
   const badges = (loc.badges||[]).map(function(b){ return '<span class="badge">'+escapeHTML(b)+'</span>'; }).join('');
-  return '<div class="loc-card fade-in">'+
+  return '<div class="loc-card fade-in visible">'+
     '<div class="loc-card-head">'+
       '<div class="loc-icon">'+ICON_PIN_SVG+'</div>'+
       '<div><p class="loc-tag">'+escapeHTML(loc.tag)+'</p><p class="loc-name">'+escapeHTML(loc.name)+'</p></div>'+

@@ -943,7 +943,7 @@ function teamCardHTML(t){
     ? '<img src="'+t.photoUrl+'" alt="'+escapeHTML(t.name||t.role)+'">'
     : '<span>'+initialsFromRole(t.role)+'</span>';
   const subtitle = t.name ? escapeHTML(t.name) : 'Rubels &amp; Angels';
-  return '<div class="people-card fade-in">'+
+  return '<div class="people-card fade-in visible">'+
     '<div class="people-portrait">'+portrait+'</div>'+
     '<div class="people-info"><h3>'+escapeHTML(t.role)+'</h3><p>'+subtitle+'</p></div>'+
   '</div>';
